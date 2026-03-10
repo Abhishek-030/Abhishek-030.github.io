@@ -6,6 +6,7 @@
 <title>ABHISHEK PATEL — Video Editor Portfolio</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  html { scroll-behavior: smooth; }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -21,7 +22,7 @@
     --font-mono: 'Space Mono', monospace;
   }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 0px; }
 
   body {
     background: var(--bg);
@@ -105,10 +106,11 @@
 
   /* HERO */
   #hero {
-    min-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     display: flex; flex-direction: column;
     justify-content: flex-end;
-    padding: 7rem 3rem 5rem;
+    padding: 6rem 3rem 3.5rem;
     position: relative;
     overflow: hidden;
   }
@@ -181,7 +183,7 @@
     color: transparent;
   }
   .hero-sub {
-    margin-top: 2.5rem;
+    margin-top: 1.2rem;
     max-width: 480px;
     font-size: 1rem;
     line-height: 1.7;
@@ -191,7 +193,7 @@
     animation: fadeUp 0.9s ease forwards 0.8s;
   }
   .hero-cta {
-    margin-top: 2.8rem;
+    margin-top: 1.5rem;
     display: flex; gap: 1.2rem; align-items: center;
     opacity: 0;
     animation: fadeUp 0.9s ease forwards 1s;
@@ -251,7 +253,21 @@
   }
 
   /* SECTION COMMON */
-  section { padding: 7rem 3rem; }
+  section { 
+    padding: 7rem 3rem; 
+    scroll-margin-top: 80px;
+  }
+  #work {
+    min-height: 100dvh;
+    padding: 2rem 2rem 1.5rem;
+    display: flex; flex-direction: column; justify-content: flex-start;
+  }
+  #about {
+    min-height: 100dvh;
+    padding: 5rem 2rem 1.5rem;
+    display: grid;
+    align-content: flex-start;
+  }
   .section-label {
     font-family: var(--font-mono);
     font-size: 0.68rem;
@@ -268,9 +284,13 @@
   }
   .section-title {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 6vw, 6rem);
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
     line-height: 0.9;
-    margin-bottom: 3rem;
+    margin-bottom: 1.2rem;
+  }
+  #work .section-title {
+    font-size: clamp(1.8rem, 4vw, 3.5rem);
+    margin-bottom: 0.8rem;
   }
 
   /* STATS STRIP */
@@ -314,34 +334,228 @@
     to { transform: translateX(-50%); }
   }
 
-  /* WORK / VIDEOS */
-  #work { background: var(--bg); }
-  .filter-tabs {
-    display: flex; gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 3rem;
+  /* WORK CATEGORIES */
+  .work-categories {
+    display: flex; gap: 2rem;
+    margin-bottom: 4rem;
   }
-  .filter-tab {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    background: transparent;
+  .work-category {
+    flex: 1;
+    position: relative;
+    padding: 3rem 2rem;
     border: 1px solid var(--border);
-    color: rgba(240,236,228,0.4);
-    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    aspect-ratio: 9/16;
+    max-height: 70vh;
+    animation: categoryPopIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  .work-category:nth-child(1) { animation-delay: 0.1s; }
+  .work-category:nth-child(2) { animation-delay: 0.2s; }
+  .work-category:nth-child(3) { animation-delay: 0.3s; }
+  
+  @keyframes categoryPopIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .category-bg {
+    position: absolute; inset: 0;
+    background: var(--card);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 0;
+  }
+  .work-category:hover .category-bg { opacity: 1; }
+  .work-category.active { flex: 1.5; border-color: var(--accent); }
+  .work-category.active .category-bg { opacity: 0; background: var(--accent); }
+  
+  .category-title {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    line-height: 0.9;
+    position: relative; z-index: 2;
+    transition: transform 0.4s ease, color 0.4s ease;
+  }
+  .work-category:hover .category-title { transform: translateY(-10px); color: var(--accent); }
+  .work-category.active .category-title { color: var(--fg); transform: translateY(-10px); }
+  
+  .category-desc {
+    font-size: 0.85rem;
+    color: rgba(240,236,228,0.5);
+    position: relative; z-index: 2;
+    margin-top: 1rem;
+    opacity: 0; transform: translateY(10px);
+    transition: all 0.4s ease 0.1s;
+  }
+  .work-category:hover .category-desc, .work-category.active .category-desc {
+    opacity: 1; transform: translateY(0);
+  }
+  
+  /* 3D STACK PREVIEW — always visible, fans out on hover */
+  .category-stack-preview {
+    position: absolute;
+    top: 40%; left: 50%;
+    transform: translate(-50%, -50%) perspective(1000px);
+    width: 140px; aspect-ratio: 9 / 16;
+    z-index: 1;
+    opacity: 1;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    animation: floatStack 4s ease-in-out infinite;
+  }
+  @keyframes floatStack {
+    0%, 100% { transform: translate(-50%, -50%) perspective(1000px) translateY(0); }
+    50% { transform: translate(-50%, -50%) perspective(1000px) translateY(-10px); }
+  }
+  /* active button keeps the stack visible but fades slightly */
+  .work-category.active .category-stack-preview { opacity: 0.5; }
+  
+  .stack-card {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+  }
+  
+  /* Default (always-on) stacked position */
+  .stack-card[data-pos="0"] { transform: rotate(-3deg) translateX(-10px); z-index: 3; opacity: 1; }
+  .stack-card[data-pos="1"] { transform: rotate(1deg) translateX(5px); z-index: 2; opacity: 1; }
+  .stack-card[data-pos="2"] { transform: rotate(4deg) translateX(15px); z-index: 1; opacity: 1; }
+  .stack-card[data-pos="hidden"] { transform: translateY(-30px); z-index: 0; opacity: 0; }
+  
+  /* Hover: fan out more dramatically */
+  .work-category:hover .stack-card[data-pos="0"] { transform: translateZ(50px) rotate(-8deg) translateX(-30px); z-index: 3; opacity: 1; }
+  .work-category:hover .stack-card[data-pos="1"] { transform: translateZ(0px) rotate(2deg) translateX(10px); z-index: 2; opacity: 1; }
+  .work-category:hover .stack-card[data-pos="2"] { transform: translateZ(-50px) rotate(8deg) translateX(40px); z-index: 1; opacity: 1; }
+  .work-category:hover .stack-card[data-pos="hidden"] { transform: translateZ(-100px) translateY(-50px); z-index: 0; opacity: 0; }
+
+  /* REEL CAROUSEL VIEWER */
+  .reel-viewer {
+    display: none;
+    position: relative;
+    width: 100%;
+    margin-top: 1.5rem;
+    overflow: hidden; /* clips outside the section */
+  }
+  .reel-track-wrap {
+    overflow: visible;
+    width: 100%;
+    position: relative;
+  }
+  .reel-track {
+    display: flex;
+    align-items: center;
+    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+  /* Active card: centered full size */
+  .reel-slide {
+    height: 55vh;
+    max-height: 600px;
+    aspect-ratio: 9/16;
+    flex: 0 0 auto;
+    position: relative;
+    margin: 0 2rem;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity   0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.4s ease;
+    opacity: 0.5;
+    transform: scale(0.85);
+    will-change: transform, opacity;
+  }
+  .reel-slide.active-slide {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(255,60,31,0.4);
+    z-index: 2;
+  }
+  .reel-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.65) saturate(0.8);
+    transition: filter 0.4s;
+  }
+  .reel-slide.active-slide img { filter: brightness(0.85) saturate(1); }
+  .reel-slide-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 55%);
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .reel-slide.active-slide .reel-slide-overlay { opacity: 1; }
+  .reel-slide-cat {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .reel-slide-title {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+  .reel-slide-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    transition: background 0.2s;
+    align-self: flex-start;
+  }
+  .reel-slide-btn:hover { background: #e02e0f; }
+
+  /* Nav arrows */
+  .reel-nav {
+    display: flex; justify-content: center; align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .reel-arrow {
+    width: 48px; height: 48px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg);
+    display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
+    font-size: 1.2rem;
   }
-  .filter-tab:hover, .filter-tab.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
+  .reel-arrow:hover { border-color: var(--accent); color: var(--accent); background: rgba(255,60,31,0.08); }
+  .reel-counter {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: rgba(240,236,228,0.4);
+    min-width: 60px;
+    text-align: center;
   }
-  .video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5px;
+
+  /* Viewer fade-in on open */
+  @keyframes reelViewerIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   /* VIDEO CARD */
@@ -481,21 +695,40 @@
   #about {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6rem;
+    gap: 4rem;
     align-items: center;
   }
   .about-visual {
     position: relative;
+    max-width: 510px;
+    width: 100%;
+    justify-self: center;
   }
   .about-img-wrap {
     position: relative;
     overflow: hidden;
+    height: 100%;
+  }
+  .about-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    aspect-ratio: 4/5;
   }
   .about-img-wrap::before {
     content: '';
     position: absolute; inset: 0;
-    border: 1px solid var(--border);
-    z-index: 2;
+    border: 3px solid var(--accent); /* Thicker orange border around the core image */
+    z-index: 4;
+    pointer-events: none;
+  }
+  .about-img-wrap::after {
+    content: '';
+    position: absolute; inset: 8px;
+    border: 1px solid rgba(255,255,255,0.2); /* Inner subtle border */
+    z-index: 4;
     pointer-events: none;
   }
   .about-placeholder {
@@ -515,11 +748,77 @@
     text-align: center;
   }
   .about-frame-deco {
-    position: absolute; bottom: -1.5rem; right: -1.5rem;
-    width: 120px; height: 120px;
-    border: 1px solid var(--accent);
+    position: absolute; bottom: 0; right: 0;
+    width: 60px; height: 60px;
+    border: 2px solid var(--accent);
+    opacity: 0.85;
+    z-index: 5;
+    pointer-events: none;
+  }
+  
+  /* CINEMATIC OVERLAY UI */
+  .about-overlay-ui {
+    position: absolute;
+    inset: 1rem;
+    pointer-events: none;
+    z-index: 3;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .ui-corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    border: 2px solid var(--accent);
+    opacity: 0.6;
+  }
+  .ui-corner.top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+  .ui-corner.top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+  .ui-corner.bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+  .ui-corner.bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+  
+  .ui-crosshair {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px; height: 40px;
     opacity: 0.3;
-    z-index: 0;
+  }
+  .ui-crosshair::before, .ui-crosshair::after {
+    content: '';
+    position: absolute;
+    background: var(--fg);
+  }
+  .ui-crosshair::before { top: 50%; left: 10px; right: 10px; height: 1px; transform: translateY(-50%); }
+  .ui-crosshair::after { left: 50%; top: 10px; bottom: 10px; width: 1px; transform: translateX(-50%); }
+  
+  .ui-rec {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 0.4rem;
+    font-weight: bold;
+  }
+  .ui-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: flash 1s steps(2, start) infinite;
+  }
+  @keyframes flash {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .ui-timecode {
+    position: absolute;
+    bottom: 1rem; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--fg);
+    opacity: 0.5;
   }
   .about-text .section-title { margin-bottom: 1.5rem; }
   .about-desc {
@@ -549,16 +848,23 @@
   }
 
   /* CONTACT */
-  #contact { text-align: center; background: #0c0c0c; }
+  #contact {
+    text-align: center;
+    background: #0c0c0c;
+    min-height: 100dvh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 7rem 3rem 2rem;
+  }
   .contact-email {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 5rem);
+    font-size: clamp(3rem, 6vw, 6rem);
     color: var(--fg);
     text-decoration: none;
     display: inline-block;
     position: relative;
     transition: color 0.3s;
-    margin: 2rem 0;
+    margin: 1.5rem 0;
   }
   .contact-email::after {
     content: '';
@@ -571,7 +877,8 @@
   .contact-email:hover::after { transform: scaleX(1); }
   .contact-socials {
     display: flex; justify-content: center; gap: 2rem;
-    margin-top: 3rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
   }
   .social-link {
     display: flex; align-items: center; gap: 0.6rem;
@@ -579,28 +886,34 @@
     font-size: 0.65rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: rgba(240,236,228,0.4);
+    color: var(--accent); /* Now orange by default */
     text-decoration: none;
-    transition: color 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
   }
-  .social-link:hover { color: var(--accent); }
+  .social-link:hover { 
+    opacity: 0.8;
+    transform: translateY(-2px);
+  }
 
   /* FOOTER */
   footer {
     padding: 2rem 3rem;
+    background: var(--card);
     border-top: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
   }
   .footer-name {
     font-family: var(--font-display);
     font-size: 1.2rem;
-    opacity: 0.3;
+    color: var(--fg);
+    opacity: 0.6;
   }
   .footer-copy {
     font-family: var(--font-mono);
     font-size: 0.6rem;
     letter-spacing: 0.15em;
-    color: rgba(240,236,228,0.2);
+    color: var(--fg);
+    opacity: 0.4;
   }
 
   /* SCROLL REVEAL */
@@ -637,9 +950,10 @@
 <nav>
   <a href="#" class="nav-logo">ABHISHEK PATEL<span>.</span></a>
   <ul class="nav-links">
+    <li><a href="#">Home</a></li>
     <li><a href="#work">Work</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#footer">Contact</a></li>
   </ul>
 </nav>
 
@@ -649,7 +963,6 @@
   <div class="hero-tape" id="heroTape">
     <!-- tape frames generated via JS -->
   </div>
-  <p class="hero-tag">✦ Visual Storyteller · Video Editor · Reel Creator</p>
   <h1 class="hero-title">
     I TELL<br>
     <span class="line2">STORIES</span>
@@ -661,7 +974,7 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       View My Work
     </a>
-    <a href="#contact" class="btn-secondary">
+    <a href="#footer" class="btn-secondary">
       Let's Collaborate →
     </a>
   </div>
@@ -680,14 +993,40 @@
   <div class="section-label">Selected Work</div>
   <h2 class="section-title reveal">MY WORK</h2>
 
-  <div class="filter-tabs reveal">
-    <button class="filter-tab active" data-filter="all">All</button>
-    <button class="filter-tab" data-filter="personal">Personal Work</button>
-    <button class="filter-tab" data-filter="college">College Media Work</button>
+  <div class="work-categories reveal">
+    <div class="work-category" data-filter="all">
+      <div class="category-bg"></div>
+      <h3 class="category-title">All<br>Work</h3>
+      <p class="category-desc">Explore the complete collection of edits</p>
+      <div class="category-stack-preview" id="preview-all"></div>
+    </div>
+    
+    <div class="work-category" data-filter="personal">
+      <div class="category-bg"></div>
+      <h3 class="category-title">Personal<br>Work</h3>
+      <p class="category-desc">Creative experiments and passion projects</p>
+      <div class="category-stack-preview" id="preview-personal"></div>
+    </div>
+
+    <div class="work-category" data-filter="college">
+      <div class="category-bg"></div>
+      <h3 class="category-title">College<br>Media Work</h3>
+      <p class="category-desc">Campus events and promotional content</p>
+      <div class="category-stack-preview" id="preview-college"></div>
+    </div>
   </div>
 
-  <div class="video-grid" id="videoGrid">
-    <!-- Cards injected via JS -->
+  <div class="reel-viewer" id="reelViewer">
+    <div class="reel-track-wrap">
+      <div class="reel-track" id="reelTrack">
+        <!-- Reel slides injected via JS -->
+      </div>
+    </div>
+    <div class="reel-nav">
+      <button class="reel-arrow" id="reelPrev">&#8592;</button>
+      <div class="reel-counter" id="reelCounter">1 / 1</div>
+      <button class="reel-arrow" id="reelNext">&#8594;</button>
+    </div>
   </div>
 </section>
 
@@ -696,6 +1035,17 @@
   <div class="about-visual reveal">
     <div class="about-img-wrap">
       <img src="abhishek.jpg" alt="Abhishek Patel" style="width:100%; aspect-ratio:4/5; object-fit:cover; object-position:center top; display:block;">
+      <div class="about-overlay-ui">
+        <div class="ui-corner top-left"></div>
+        <div class="ui-corner top-right"></div>
+        <div class="ui-corner bottom-left"></div>
+        <div class="ui-corner bottom-right"></div>
+        <div class="ui-crosshair"></div>
+        <div class="ui-rec">
+           <span class="ui-dot"></span> REC
+        </div>
+        <div class="ui-timecode">00:04:23:18</div>
+      </div>
     </div>
     <div class="about-frame-deco"></div>
   </div>
@@ -717,7 +1067,7 @@
       <span class="skill-tag">Motion Graphics</span>
       <span class="skill-tag">Sound Design</span>
     </div>
-    <a href="#contact" class="btn-primary reveal" style="display:inline-flex">Work With Me →</a>
+    <a href="#footer" class="btn-primary reveal" style="display:inline-flex">Work With Me →</a>
   </div>
 </section>
 
@@ -749,40 +1099,42 @@
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-name">ABHISHEK PATEL.</div>
-  <div class="footer-copy">© 2025 · Built for storytellers</div>
-</footer>
-
-</footer>
+  <!-- FOOTER inside contact so it's visible without extra scrolling -->
+  <div id="footer"></div>
+  <footer style="margin-top:auto; width:100%; padding-top:2rem; border-top:1px solid #1a1a1a;">
+    <div class="footer-name">ABHISHEK PATEL.</div>
+    <div class="footer-copy">© 2026 · Built for storytellers</div>
+  </footer>
+</section>
 
 <script>
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 🎬 VIDEO DATA
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const videos = [
+  // ── FEATURED FIRST ──
+  { id:7,  title:"AI CAMP",             category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DQdx7CIkz9k", platformUrl:"https://www.instagram.com/reel/DQdx7CIkz9k/",          thumbnail:"thumbnails/ai_camp.jpg" },
+
   // ── PERSONAL WORK ──
-  { id:1,  title:"LAMBO EDIT",          category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DQ7U02igJsy", platformUrl:"https://www.instagram.com/reel/DQ7U02igJsy/",          thumbnail:"lambo_edit.jpg" },
-  { id:2,  title:"ROG STRIX EDIT",      category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DLdJD-DM6GR", platformUrl:"https://www.instagram.com/reel/DLdJD-DM6GR/",          thumbnail:"rog_strix_edit.jpg" },
-  { id:3,  title:"GREEN CAMPUS EDIT",   category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DMIYyoVpbmw", platformUrl:"https://www.instagram.com/reel/DMIYyoVpbmw/",          thumbnail:"green_campus_edit.jpg" },
-  { id:4,  title:"CHRISTMAS 2K25 EDIT", category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DSxFU6QjEXe", platformUrl:"https://www.instagram.com/reel/DSxFU6QjEXe/",          thumbnail:"christmas_2k25_edit.jpg" },
+  { id:1,  title:"LAMBO EDIT",          category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DQ7U02igJsy", platformUrl:"https://www.instagram.com/reel/DQ7U02igJsy/",          thumbnail:"thumbnails/lambo_edit.jpg" },
+  { id:2,  title:"ROG STRIX EDIT",      category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DLdJD-DM6GR", platformUrl:"https://www.instagram.com/reel/DLdJD-DM6GR/",          thumbnail:"thumbnails/rog_strix_edit.jpg" },
+  { id:3,  title:"GREEN CAMPUS EDIT",   category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DMIYyoVpbmw", platformUrl:"https://www.instagram.com/reel/DMIYyoVpbmw/",          thumbnail:"thumbnails/green_campus_edit.jpg" },
+  { id:4,  title:"CHRISTMAS 2K25 EDIT", category:"personal", categoryLabel:"Personal Work",      platform:"instagram", reelId:"DSxFU6QjEXe", platformUrl:"https://www.instagram.com/reel/DSxFU6QjEXe/",          thumbnail:"thumbnails/christmas_2k25_edit.jpg" },
   { id:5,  title:"CARTOON EDIT",        category:"personal", categoryLabel:"Personal Work",      platform:"youtube",  videoId:"0wsd702kraE", platformUrl:"https://youtube.com/shorts/0wsd702kraE",
            thumbnail:"https://img.youtube.com/vi/0wsd702kraE/maxresdefault.jpg" },
 
   // ── COLLEGE MEDIA WORK ──
-  { id:6,  title:"DSA TREASURE HUNT",   category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DO5PJSxDDGa", platformUrl:"https://www.instagram.com/reel/DO5PJSxDDGa/",          thumbnail:"dsa_treasure_hunt.jpg" },
-  { id:7,  title:"AI CAMP",             category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DQdx7CIkz9k", platformUrl:"https://www.instagram.com/reel/DQdx7CIkz9k/",          thumbnail:"ai_camp.jpg" },
-  { id:8,  title:"DEBUGGING CONTEST",   category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DNPS8O6zVQm", platformUrl:"https://www.instagram.com/reel/DNPS8O6zVQm/",          thumbnail:"debugging_contest.jpg" },
+  { id:6,  title:"DSA TREASURE HUNT",   category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DO5PJSxDDGa", platformUrl:"https://www.instagram.com/reel/DO5PJSxDDGa/",          thumbnail:"thumbnails/dsa_treasure_hunt.jpg" },
+  { id:8,  title:"DEBUGGING CONTEST",   category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DNPS8O6zVQm", platformUrl:"https://www.instagram.com/reel/DNPS8O6zVQm/",          thumbnail:"thumbnails/debugging_contest.jpg" },
   { id:9,  title:"TEDXCHARUSAT",        category:"college",  categoryLabel:"College Media Work", platform:"youtube",  videoId:"zi3oQq2RHZA", platformUrl:"https://youtube.com/shorts/zi3oQq2RHZA?feature=share",
            thumbnail:"https://img.youtube.com/vi/zi3oQq2RHZA/maxresdefault.jpg" },
-  { id:10, title:"DB SHORT 01",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DTzofUeE8Sd", platformUrl:"https://www.instagram.com/reel/DTzofUeE8Sd/",          thumbnail:"db_short_01.jpg" },
-  { id:11, title:"AI DROP 20",          category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DUw6H3zDFuy", platformUrl:"https://www.instagram.com/reel/DUw6H3zDFuy/",          thumbnail:"ai_drop_20.jpg" },
-  { id:12, title:"DB SHORT 05",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DVKpXx1E_NH", platformUrl:"https://www.instagram.com/reel/DVKpXx1E_NH/",          thumbnail:"db_short_05.jpg" },
-  { id:13, title:"AI DROP 21",          category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DVTSTK1DOrj", platformUrl:"https://www.instagram.com/reel/DVTSTK1DOrj/",          thumbnail:"ai_drop_21.jpg" },
-  { id:14, title:"DB SHORT 02",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DUGl9c1E9-g", platformUrl:"https://www.instagram.com/reel/DUGl9c1E9-g/",          thumbnail:"db_short_02.jpg" },
-  { id:15, title:"DB SHORT 03",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DUYBy5MjMce", platformUrl:"https://www.instagram.com/reel/DUYBy5MjMce/",          thumbnail:"db_short_03.jpg" },
-  { id:16, title:"DB SHORT 04",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DU43X6hjL6c", platformUrl:"https://www.instagram.com/reel/DU43X6hjL6c/",          thumbnail:"db_short_04.jpg" },
+  { id:10, title:"DB SHORT 01",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DTzofUeE8Sd", platformUrl:"https://www.instagram.com/reel/DTzofUeE8Sd/",          thumbnail:"thumbnails/db_short_01.jpg" },
+  { id:11, title:"AI DROP 20",          category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DUw6H3zDFuy", platformUrl:"https://www.instagram.com/reel/DUw6H3zDFuy/",          thumbnail:"thumbnails/ai_drop_20.jpg" },
+  { id:12, title:"DB SHORT 05",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DVKpXx1E_NH", platformUrl:"https://www.instagram.com/reel/DVKpXx1E_NH/",          thumbnail:"thumbnails/db_short_05.jpg" },
+  { id:13, title:"AI DROP 21",          category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DVTSTK1DOrj", platformUrl:"https://www.instagram.com/reel/DVTSTK1DOrj/",          thumbnail:"thumbnails/ai_drop_21.jpg" },
+  { id:14, title:"DB SHORT 02",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DUGl9c1E9-g", platformUrl:"https://www.instagram.com/reel/DUGl9c1E9-g/",          thumbnail:"thumbnails/db_short_02.jpg" },
+  { id:15, title:"DB SHORT 03",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DUYBy5MjMce", platformUrl:"https://www.instagram.com/reel/DUYBy5MjMce/",          thumbnail:"thumbnails/db_short_03.jpg" },
+  { id:16, title:"DB SHORT 04",         category:"college",  categoryLabel:"College Media Work", platform:"instagram", reelId:"DU43X6hjL6c", platformUrl:"https://www.instagram.com/reel/DU43X6hjL6c/",          thumbnail:"thumbnails/db_short_04.jpg" },
 ];
 
 // Get thumbnail from video object
@@ -795,6 +1147,9 @@ function onThumbError(el, title) {
   el.style.display = 'none';
   el.parentElement.style.background = 'linear-gradient(135deg,#0f0f0f 0%,#1a0a0a 50%,#0a0a14 100%)';
 }
+// Always start at top of page on load/reload
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const platformIcons = {
@@ -848,48 +1203,205 @@ const buildStats = () => statsData.map(s => `
 `).join('');
 track.innerHTML = buildStats() + buildStats();
 
-// BUILD VIDEO GRID
-let activeFilter = 'all';
-function buildGrid() {
-  const grid = document.getElementById('videoGrid');
-  const filtered = activeFilter === 'all' ? videos : videos.filter(v => v.category === activeFilter);
-  grid.innerHTML = filtered.map((v) => {
+// POPULATE 3D STACK PREVIEWS
+function initStackPreviews() {
+  const categories = ['all', 'personal', 'college'];
+  categories.forEach(cat => {
+    const previewContainer = document.getElementById(`preview-${cat}`);
+    if (!previewContainer) return;
+    
+    // Get up to 5 videos for the stack so we can scroll through them
+    let stackVideos = [];
+    if (cat === 'all') {
+      // Show ALL videos in the stack for "All Work"
+      stackVideos = [...videos];
+    } else if (cat === 'personal') {
+      // First card: ROG STRIX EDIT (id:2), then rest of personal
+      const first    = videos.find(v => v.id === 2);
+      const rest     = videos.filter(v => v.category === 'personal' && v.id !== 2).slice(0, 4);
+      stackVideos    = [first, ...rest].filter(Boolean);
+    } else if (cat === 'college') {
+      // First card: DSA TREASURE HUNT (id:6), then rest of college
+      const first    = videos.find(v => v.id === 6);
+      const rest     = videos.filter(v => v.category === 'college' && v.id !== 6).slice(0, 4);
+      stackVideos    = [first, ...rest].filter(Boolean);
+    }
+    
+    previewContainer.innerHTML = stackVideos.map((v, i) => {
+      const thumb = getThumbnail(v);
+      const bg = thumb ? `url(${thumb})` : 'linear-gradient(135deg,#0f0f0f,#1a0a0a,#0a0a14)';
+      const pos = i < 3 ? i : 'hidden';
+      return `<div class="stack-card" data-pos="${pos}" style="background-image: ${bg}"></div>`;
+    }).join('');
+    
+    // Scroll to cycle: rotate data-pos values IN PLACE (no DOM reorder) so CSS transitions fire smoothly
+    const categoryBtn = previewContainer.closest('.work-category');
+    let scrollLock = false;
+    
+    categoryBtn.addEventListener('wheel', (e) => {
+      if (categoryBtn.classList.contains('active')) return;
+      e.preventDefault();
+      if (scrollLock) return; // throttle
+      scrollLock = true;
+      setTimeout(() => scrollLock = false, 700);
+      
+      const cards = Array.from(previewContainer.querySelectorAll('.stack-card'));
+      if (cards.length <= 1) return;
+      
+      // Collect current positions as numbers (hidden = cards.length-1 as a cycle position)
+      const total = cards.length;
+      const positions = cards.map(c => {
+        const p = c.getAttribute('data-pos');
+        return p === 'hidden' ? 3 : parseInt(p); // treat hidden slots as pos 3, 4...
+      });
+      
+      if (e.deltaY > 0) {
+        // Scroll down: front card (pos=0) goes to back, everyone else moves up
+        cards.forEach((card, i) => {
+          let newPos = positions[i] - 1;
+          if (newPos < 0) newPos = total - 1; // wrap around to last slot
+          card.setAttribute('data-pos', newPos < 3 ? newPos : 'hidden');
+        });
+      } else {
+        // Scroll up: back card comes to front, everyone shifts back
+        cards.forEach((card, i) => {
+          let newPos = positions[i] + 1;
+          if (newPos >= total) newPos = 0; // wrap around to front
+          card.setAttribute('data-pos', newPos < 3 ? newPos : 'hidden');
+        });
+      }
+    });
+  });
+}
+initStackPreviews();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// REEL CAROUSEL
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let activeFilter = 'none';
+let reelIndex    = 0;
+let reelVideos   = [];
+
+function buildReel() {
+  const viewer  = document.getElementById('reelViewer');
+  const track   = document.getElementById('reelTrack');
+  const counter = document.getElementById('reelCounter');
+
+  if (activeFilter === 'none') {
+    viewer.style.display = 'none';
+    return;
+  }
+
+  reelVideos  = activeFilter === 'all' ? videos : videos.filter(v => v.category === activeFilter);
+  reelIndex   = 0;
+
+  track.innerHTML = reelVideos.map((v, idx) => {
     const thumb = getThumbnail(v);
-    const imgTag = thumb
-      ? `<img class="video-thumb" src="${thumb}" alt="${v.title}" onerror="onThumbError(this)">`
-      : `<div class="video-thumb" style="background:linear-gradient(135deg,#0f0f0f,#1a0a0a,#0a0a14);width:100%;height:100%;display:block;"></div>`;
-    const isComingSoon = v.platformUrl === '#';
-    const watchBtn = isComingSoon
-      ? `<span class="btn-watch" style="opacity:0.4;cursor:default;">Coming Soon</span>`
-      : `<a class="btn-watch" href="${v.platformUrl}" target="_blank" rel="noopener">
-           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-           Watch
-         </a>`;
+    const bg = thumb
+      ? `<img src="${thumb}" alt="${v.title}" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block;">`
+      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#0f0f0f,#1a0a0a,#0a0a14)"></div>`;
     return `
-    <div class="video-card" data-id="${v.id}" data-platform="${v.platform}" data-video-id="${v.videoId||''}" data-reel-id="${v.reelId||''}" onclick="if(event.target.tagName!=='BUTTON'&&event.target.tagName!=='A'&&event.target.tagName!=='SVG'&&event.target.tagName!=='PATH'){ ${isComingSoon ? '' : `window.open('${v.platformUrl}','_blank')`} }">
-      ${imgTag}
-      <div class="video-overlay">
-        <div class="video-platform">
-          ${platformIcons[v.platform] || ''}
-          <span class="platform-label">${v.platform}</span>
-        </div>
-        <div class="video-cat">${v.categoryLabel}</div>
-        <div class="video-title">${v.title}</div>
-        <div class="video-actions">
-          ${watchBtn}
-          ${!isComingSoon ? `<a class="btn-visit" href="${v.platformUrl}" target="_blank" rel="noopener">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Open
-          </a>` : ''}
-        </div>
-      </div>
-      <div class="play-pulse">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+    <div class="reel-slide ${idx === 0 ? 'active-slide' : ''}" 
+         data-idx="${idx}"
+         onclick="window.open('${v.platformUrl}','_blank')">
+      ${bg}
+      <div class="reel-slide-overlay">
+        <div class="reel-slide-cat">${v.categoryLabel}</div>
+        <div class="reel-slide-title">${v.title}</div>
+        <a class="reel-slide-btn" href="${v.platformUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          Watch
+        </a>
       </div>
     </div>`;
   }).join('');
+
+  viewer.style.display = 'block';
+  viewer.style.animation = 'reelViewerIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both';
+  counter.textContent  = `1 / ${reelVideos.length}`;
+  updateReelPosition(false);
 }
-buildGrid();
+
+function updateReelPosition(animate = true) {
+  const track   = document.getElementById('reelTrack');
+  const counter = document.getElementById('reelCounter');
+  const wrap    = document.querySelector('.reel-track-wrap');
+  const slides  = track.querySelectorAll('.reel-slide');
+
+  slides.forEach((s, i) => s.classList.toggle('active-slide', i === reelIndex));
+
+  // Center the active slide dynamically based on CSS dimensions
+  let slideW = 268; // fallback
+  if (slides.length > 0) {
+    const style = window.getComputedStyle(slides[0]);
+    slideW = slides[0].offsetWidth + parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+  }
+  const wrapW     = wrap.offsetWidth;
+  const offset    = (wrapW / 2) - (slideW / 2) - (reelIndex * slideW);
+
+  track.style.transition = animate ? 'transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none';
+  track.style.transform  = `translateX(${offset}px)`;
+  counter.textContent    = `${reelIndex + 1} / ${reelVideos.length}`;
+}
+
+// Arrow nav
+document.getElementById('reelPrev').addEventListener('click', () => {
+  if (reelIndex > 0) { reelIndex--; updateReelPosition(); }
+});
+document.getElementById('reelNext').addEventListener('click', () => {
+  if (reelIndex < reelVideos.length - 1) { reelIndex++; updateReelPosition(); }
+});
+
+// Click on any slide to jump to it
+document.getElementById('reelTrack').addEventListener('click', (e) => {
+  const slide = e.target.closest('.reel-slide');
+  if (!slide) return;
+  const idx = parseInt(slide.dataset.idx);
+  if (idx !== reelIndex) {
+    e.preventDefault();
+    reelIndex = idx;
+    updateReelPosition();
+  }
+});
+
+// Scroll wheel on viewer — smooth, low-latency debounce via RAF
+let reelScrollPending = false;
+document.getElementById('reelViewer').addEventListener('wheel', (e) => {
+  e.preventDefault();
+  if (reelScrollPending) return;
+  reelScrollPending = true;
+  requestAnimationFrame(() => {
+    setTimeout(() => reelScrollPending = false, 500);
+    if (e.deltaY > 0 && reelIndex < reelVideos.length - 1) {
+      reelIndex++; updateReelPosition();
+    } else if (e.deltaY < 0 && reelIndex > 0) {
+      reelIndex--; updateReelPosition();
+    }
+  });
+}, { passive: false });
+
+// CATEGORY CLICK HANDLING
+document.querySelectorAll('.work-category').forEach(catBtn => {
+  catBtn.addEventListener('click', () => {
+    const isAlreadyActive = catBtn.classList.contains('active');
+    document.querySelectorAll('.work-category').forEach(b => b.classList.remove('active'));
+
+    if (isAlreadyActive) {
+      activeFilter = 'none';
+      buildReel();
+    } else {
+      catBtn.classList.add('active');
+      activeFilter = catBtn.dataset.filter;
+      buildReel();
+      // Scroll to keep the videos perfectly centered
+      setTimeout(() => {
+        document.getElementById('reelViewer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 120);
+    }
+  });
+});
+
+// The video grid is hidden until the user clicks a category to view it.
 
 // HOVER-TO-PLAY
 function attachHoverPlay() {
