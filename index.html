@@ -44,14 +44,14 @@
     mix-blend-mode: difference;
   }
   .cursor-ring {
-    width: 32px; height: 32px;
+    width: 28px; height: 28px;
     border: 1.5px solid var(--accent);
     border-radius: 0;
     position: fixed; top: 0; left: 0;
     pointer-events: none;
     z-index: 9998;
-    transition: all 0.15s ease;
-    opacity: 0.5;
+    transition: width 0.15s ease, height 0.15s ease, opacity 0.15s ease;
+    opacity: 0.85;
   }
   body:hover .cursor { transform: scale(1); }
   a:hover ~ .cursor, button:hover ~ .cursor { transform: scale(2.5); }
@@ -75,34 +75,108 @@
     background: linear-gradient(to bottom, rgba(8,8,8,0.95), transparent);
     backdrop-filter: blur(2px);
   }
+  /* ═══════════════════════════════════════
+     CREATIVE NAV LOGO — ABHISHEK PATEL
+  ═══════════════════════════════════════ */
   .nav-logo {
     font-family: var(--font-display);
     font-size: 2rem;
     letter-spacing: 0.1em;
     color: var(--fg);
     text-decoration: none;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
   }
-  .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .logo-name-wrap {
+    display: inline-flex;
+    align-items: baseline;
+  }
+  .logo-char {
+    display: inline-block;
+    color: var(--fg);
+    -webkit-text-stroke: 0px transparent;
+    transition: color 0.2s ease, -webkit-text-stroke 0.2s ease, opacity 0.2s ease;
+  }
+  /* On hover: chars turn accent red, staggered via JS delay */
+  .nav-logo:hover .logo-char {
+    color: var(--accent);
+  }
+  /* Space char */
+  .logo-char-space { display: inline-block; width: 0.28em; }
+  .logo-dot {
+    color: var(--accent);
+    display: inline-block;
+    margin-left: 2px;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), color 0.2s;
+    transform-origin: center bottom;
+  }
+  .nav-logo:hover .logo-dot {
+    transform: scale(1.8);
+  }
+  /* Thin underline sweep */
+  .nav-logo::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0;
+    height: 1px;
+    width: 0;
+    background: var(--accent);
+    transition: width 0.45s cubic-bezier(0.16,1,0.3,1);
+  }
+  .nav-logo:hover::after { width: 100%; }
+  .nav-links { display: flex; gap: 0.4rem; list-style: none; align-items: center; }
   .nav-links a {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--fg);
     text-decoration: none;
-    opacity: 0.6;
-    transition: opacity 0.2s, color 0.2s;
+    opacity: 0.55;
     position: relative;
+    padding: 0.45rem 1rem 0.45rem 2rem;
+    border: 1px solid transparent;
+    transition: opacity 0.25s, border-color 0.25s, background 0.25s, color 0.25s, padding-left 0.3s cubic-bezier(0.16,1,0.3,1);
+    overflow: hidden;
   }
+  /* Number badge — top-left corner */
+  .nav-links a::before {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    position: absolute;
+    left: 0.55rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .nav-links li:nth-child(1) a::before { content: '01'; }
+  .nav-links li:nth-child(2) a::before { content: '02'; }
+  .nav-links li:nth-child(3) a::before { content: '03'; }
+  .nav-links li:nth-child(4) a::before { content: '04'; }
+  /* Accent fill from bottom */
   .nav-links a::after {
     content: '';
-    position: absolute; bottom: -4px; left: 0; right: 0;
-    height: 1px; background: var(--accent);
-    transform: scaleX(0); transition: transform 0.2s ease;
+    position: absolute;
+    inset: 0;
+    background: rgba(255,60,31,0.07);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    z-index: 0;
   }
-  .nav-links a:hover { opacity: 1; color: var(--fg); }
-  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-links a span { position: relative; z-index: 1; }
+  .nav-links a:hover {
+    opacity: 1;
+    border-color: rgba(255,60,31,0.3);
+    color: var(--fg);
+  }
+  .nav-links a:hover::before { opacity: 1; }
+  .nav-links a:hover::after { transform: scaleY(1); }
 
   /* HERO */
   #hero {
@@ -171,16 +245,124 @@
     font-family: var(--font-display);
     font-size: clamp(5rem, 14vw, 14rem);
     line-height: 0.88;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
     position: relative; z-index: 1;
-    opacity: 0;
-    animation: fadeUp 0.9s ease forwards 0.5s;
   }
-  .hero-title .line2 { color: var(--accent); display: block; }
-  .hero-title .line3 {
+  /* Hero line-by-line char animation */
+  .hero-line {
     display: block;
-    -webkit-text-stroke: 1.5px var(--fg);
-    color: transparent;
+    overflow: hidden;
+  }
+  .hero-line.line2 { color: var(--accent); }
+  .hero-line.line3 { -webkit-text-stroke: 1.5px var(--fg); color: transparent; }
+  .hero-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(110%) skewY(6deg);
+    letter-spacing: 0.015em;
+    transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1),
+                transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .hero-char.in { opacity: 1; transform: translateY(0) skewY(0); }
+  /* Subtle per-char shadow — warm accent glow underneath each letter */
+  #heroTitle .line1 .hero-char.in {
+    text-shadow: 0 4px 18px rgba(255,60,31,0.18), 0 2px 6px rgba(255,60,31,0.10);
+  }
+  #heroTitle .line2 .hero-char.in {
+    text-shadow: 0 3px 14px rgba(255,60,31,0.18), 0 1px 4px rgba(255,60,31,0.10);
+  }
+  #heroTitle .line3 .hero-char.in {
+    text-shadow: 0 4px 16px rgba(240,236,228,0.10), 0 1px 4px rgba(255,60,31,0.08);
+  }
+  .hero-char-space { display: inline-block; width: 0.28em; }
+
+  /* ═══════════════════════════════════════
+     STATS BAR — FILM COUNTER REDESIGN
+  ═══════════════════════════════════════ */
+  #stats {
+    padding: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+  }
+  /* Pause scroll on hover */
+  #stats:hover .stats-track { animation-play-state: paused; }
+  .stats-track {
+    display: flex; gap: 0;
+    animation: statsScroll 28s linear infinite;
+    width: max-content;
+  }
+  @keyframes statsScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-25%); }
+  }
+  .stat-item {
+    display: flex; align-items: stretch; gap: 0;
+    padding: 0;
+    white-space: nowrap;
+    border-right: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Red fill that rises from bottom on hover */
+  .stat-item::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 0;
+    background: rgba(255,60,31,0.06);
+    transition: height 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .stat-item:hover::before { height: 100%; }
+  .stat-inner {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 1.6rem 3rem;
+    position: relative; z-index: 1;
+    gap: 0.35rem;
+  }
+  .stat-num-row {
+    display: flex; align-items: baseline; gap: 0.5rem;
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    color: var(--accent);
+    line-height: 1;
+    transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .stat-item:hover .stat-num { letter-spacing: 0.06em; }
+  .stat-unit {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: rgba(255,60,31,0.5);
+    text-transform: uppercase;
+    align-self: flex-end;
+    padding-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(240,236,228,0.35);
+  }
+  /* Thin accent progress bar at bottom of each stat */
+  .stat-bar {
+    position: absolute; bottom: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0.5;
+    width: 0;
+    transition: width 1s cubic-bezier(0.16,1,0.3,1);
+  }
+  .stat-item:hover .stat-bar { width: 100%; opacity: 0.8; }
+  .stat-divider {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    color: var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center;
   }
   .hero-sub {
     margin-top: 1.2rem;
@@ -293,46 +475,6 @@
     margin-bottom: 0.8rem;
   }
 
-  /* STATS STRIP */
-  #stats {
-    padding: 2rem 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .stats-track {
-    display: flex; gap: 0;
-    animation: statsScroll 20s linear infinite;
-    width: max-content;
-  }
-  .stat-item {
-    display: flex; align-items: center; gap: 3rem;
-    padding: 0 3rem;
-    border-right: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .stat-num {
-    font-family: var(--font-display);
-    font-size: 2.5rem;
-    color: var(--accent);
-  }
-  .stat-label {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(240,236,228,0.4);
-  }
-  .stat-divider {
-    font-family: var(--font-display);
-    font-size: 3rem;
-    color: var(--border);
-    padding: 0 2rem;
-  }
-  @keyframes statsScroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
 
   /* WORK CATEGORIES */
   .work-categories {
@@ -927,6 +1069,205 @@
     transform: translateY(0);
   }
 
+  /* ═══════════════════════════════════════
+     CINEMATIC PRELOADER
+  ═══════════════════════════════════════ */
+  #preloader {
+    position: fixed; inset: 0;
+    background: #080808;
+    z-index: 99999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2rem;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  #preloader.hide {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+  }
+  .preloader-logo {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    letter-spacing: 0.12em;
+    color: var(--fg);
+    overflow: hidden;
+    display: flex;
+  }
+  .preloader-logo span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: preLetterIn 0.6s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  @keyframes preLetterIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .preloader-bar-wrap {
+    width: 200px; height: 1px;
+    background: rgba(255,60,31,0.15);
+    overflow: hidden;
+  }
+  .preloader-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0;
+    animation: barFill 1.2s cubic-bezier(0.4,0,0.2,1) 0.5s forwards;
+  }
+  @keyframes barFill { to { width: 100%; } }
+  .preloader-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,60,31,0.6);
+    animation: blinkText 0.8s step-start infinite;
+  }
+  @keyframes blinkText { 50% { opacity: 0; } }
+
+  /* ═══════════════════════════════════════
+     CURSOR PARTICLE TRAIL
+  ═══════════════════════════════════════ */
+  .cursor-particle {
+    position: fixed;
+    width: 5px; height: 5px;
+    background: var(--accent);
+    border-radius: 0;
+    pointer-events: none;
+    z-index: 9996;
+    transform: translate(-50%, -50%);
+    animation: particleFade 0.6s ease forwards;
+  }
+  @keyframes particleFade {
+    0% { opacity: 0.8; transform: translate(-50%,-50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(0) translateY(-12px); }
+  }
+
+  /* ═══════════════════════════════════════
+     MAGNETIC BUTTON
+  ═══════════════════════════════════════ */
+  .btn-primary, .btn-secondary {
+    transition: background 0.2s, transform 0.15s cubic-bezier(0.16,1,0.3,1), color 0.2s;
+    will-change: transform;
+  }
+
+  /* ═══════════════════════════════════════
+     SCROLL TEXT REVEAL (line by line)
+  ═══════════════════════════════════════ */
+  .reveal-line {
+    overflow: hidden;
+    display: block;
+  }
+  .reveal-line-inner {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+                transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal-line.visible .reveal-line-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ═══════════════════════════════════════
+     CONTACT SPOTLIGHT
+  ═══════════════════════════════════════ */
+  #contact {
+    position: relative;
+  }
+  .contact-spotlight {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,60,31,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: left 0.08s linear, top 0.08s linear;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease, left 0.05s linear, top 0.05s linear;
+  }
+  #contact:hover .contact-spotlight { opacity: 1; }
+  #contact > * { position: relative; z-index: 1; }
+
+  /* ═══════════════════════════════════════
+     STAT NUMBER COUNTER
+  ═══════════════════════════════════════ */
+
+
+  /* ═══════════════════════════════════════
+     ABOUT IMAGE PARALLAX TILT
+  ═══════════════════════════════════════ */
+  .about-img-wrap {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease;
+    will-change: transform;
+  }
+
+  /* ═══════════════════════════════════════
+     SKILL TAG STAGGER REVEAL
+  ═══════════════════════════════════════ */
+  .skill-tag {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease,
+                border-color 0.2s, color 0.2s;
+  }
+  .skill-tag.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ═══════════════════════════════════════
+     SECTION TITLE — ELEGANT HOVER TREATMENT
+  ═══════════════════════════════════════ */
+  .section-title {
+    position: relative;
+    cursor: default;
+    display: inline-block;
+  }
+  /* Accent stroke that draws across bottom of the title */
+  .section-title::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -6px;
+    height: 2px;
+    width: 0;
+    background: var(--accent);
+    transition: width 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: left;
+  }
+  .section-title:hover::after {
+    width: 100%;
+  }
+  /* Subtle letter-spacing breath on hover */
+  .section-title {
+    transition: letter-spacing 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.3s ease;
+  }
+  .section-title:hover {
+    letter-spacing: 0.04em;
+  }
+  /* Vertical accent bar — pulses in from left as a filmstrip mark */
+  .section-title::before {
+    content: '';
+    position: absolute;
+    left: -18px; top: 10%;
+    width: 3px; height: 0;
+    background: var(--accent);
+    transition: height 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+    border-radius: 0;
+  }
+  .section-title:hover::before {
+    height: 80%;
+  }
+
+  /* Contact title — no lines/bars */
+  .section-title--plain::before,
+  .section-title--plain::after { display: none !important; }
+  .section-title--plain:hover { letter-spacing: inherit; }
+
   /* RESPONSIVE */
   @media (max-width: 900px) {
     nav { padding: 1.2rem 1.5rem; }
@@ -942,18 +1283,25 @@
 </head>
 <body>
 
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="preloader-logo" id="preloaderLogo"></div>
+  <div class="preloader-bar-wrap"><div class="preloader-bar"></div></div>
+  <div class="preloader-label">Loading reel</div>
+</div>
+
 <!-- CURSOR -->
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">ABHISHEK PATEL<span>.</span></a>
+  <a href="#" class="nav-logo" id="navLogo"></a>
   <ul class="nav-links">
-    <li><a href="#">Home</a></li>
-    <li><a href="#work">Work</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#footer">Contact</a></li>
+    <li><a href="#"><span>Home</span></a></li>
+    <li><a href="#work"><span>Work</span></a></li>
+    <li><a href="#about"><span>About</span></a></li>
+    <li><a href="#footer"><span>Contact</span></a></li>
   </ul>
 </nav>
 
@@ -963,10 +1311,10 @@
   <div class="hero-tape" id="heroTape">
     <!-- tape frames generated via JS -->
   </div>
-  <h1 class="hero-title">
-    I TELL<br>
-    <span class="line2">STORIES</span>
-    <span class="line3">THROUGH REELS</span>
+  <h1 class="hero-title" id="heroTitle">
+    <span class="hero-line line1"></span>
+    <span class="hero-line line2"></span>
+    <span class="hero-line line3"></span>
   </h1>
   <p class="hero-sub">Crafting cinematic moments that captivate, inspire, and connect. From short videos to social reels — every frame is intentional.</p>
   <div class="hero-cta">
@@ -1073,8 +1421,9 @@
 
 <!-- CONTACT -->
 <section id="contact">
+  <div class="contact-spotlight" id="contactSpotlight"></div>
   <div class="section-label" style="justify-content:center">Get In Touch</div>
-  <h2 class="section-title reveal">LET'S<br><span style="color:var(--accent)">CREATE</span></h2>
+  <h2 class="section-title section-title--plain reveal">LET'S<br><span style="color:var(--accent)">CREATE</span></h2>
   <p style="color:rgba(240,236,228,0.45); font-size:1rem; max-width:400px; margin:0 auto 1rem; line-height:1.7;" class="reveal">
     Have a project in mind? I'd love to hear about it. Drop me a line and let's make something remarkable.
   </p>
@@ -1187,21 +1536,25 @@ for (let i = 0; i < 30; i++) {
 
 // BUILD STATS
 const statsData = [
-  { num: '30+', label: 'Projects Delivered' },
-  { num: '3YRS', label: 'Experience' },
-  { num: 'EDITOR', label: 'Dept. Media Team' },
+  { num: '30+', unit: '', label: 'Projects Delivered' },
+  { num: '3',   unit: 'YRS', label: 'Experience' },
+  { num: 'CURRENTLY', unit: '', label: 'Dept. Media Team' },
 ];
 const track = document.getElementById('statsTrack');
 const buildStats = () => statsData.map(s => `
   <div class="stat-item">
-    <div>
-      <div class="stat-num">${s.num}</div>
+    <div class="stat-inner">
+      <div class="stat-num-row">
+        <div class="stat-num">${s.num}</div>
+        <div class="stat-unit">${s.unit}</div>
+      </div>
       <div class="stat-label">${s.label}</div>
     </div>
+    <div class="stat-bar"></div>
   </div>
   <span class="stat-divider">✦</span>
 `).join('');
-track.innerHTML = buildStats() + buildStats();
+track.innerHTML = buildStats() + buildStats() + buildStats() + buildStats();
 
 // POPULATE 3D STACK PREVIEWS
 function initStackPreviews() {
@@ -1460,10 +1813,10 @@ document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; })
 function animateCursor() {
   cursor.style.left = mx - 6 + 'px';
   cursor.style.top = my - 6 + 'px';
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx - 20 + 'px';
-  ring.style.top = ry - 20 + 'px';
+  rx += (mx - rx) * 0.28;
+  ry += (my - ry) * 0.28;
+  ring.style.left = rx - 14 + 'px';
+  ring.style.top = ry - 14 + 'px';
   requestAnimationFrame(animateCursor);
 }
 animateCursor();
@@ -1472,8 +1825,245 @@ animateCursor();
 const revealEls = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-}, { threshold: 0.1 });
+}, { threshold: 0.15 });
 revealEls.forEach(el => observer.observe(el));
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🎬 CINEMATIC PRELOADER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  const logoEl = document.getElementById('preloaderLogo');
+  const text = 'ABHISHEK.';
+  text.split('').forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.textContent = ch === ' ' ? '\u00A0' : ch;
+    span.style.animationDelay = (i * 0.045) + 's';
+    if (ch === '.') span.style.color = '#ff3c1f';
+    logoEl.appendChild(span);
+  });
+  setTimeout(() => {
+    document.getElementById('preloader').classList.add('hide');
+    setTimeout(() => document.getElementById('preloader').remove(), 800);
+  }, 1800);
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ HERO TITLE — PER CHARACTER REVEAL (line-safe)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  const lines = [
+    { text: 'I TELL', el: document.querySelector('#heroTitle .line1') },
+    { text: 'STORIES', el: document.querySelector('#heroTitle .line2') },
+    { text: 'THROUGH REELS', el: document.querySelector('#heroTitle .line3') },
+  ];
+  function buildLine(text, container) {
+    text.split('').forEach(ch => {
+      if (ch === ' ') {
+        const sp = document.createElement('span');
+        sp.className = 'hero-char-space';
+        container.appendChild(sp);
+      } else {
+        const span = document.createElement('span');
+        span.className = 'hero-char';
+        span.textContent = ch;
+        container.appendChild(span);
+      }
+    });
+  }
+  lines.forEach(l => { if (l.el) buildLine(l.text, l.el); });
+  const allChars = document.querySelectorAll('#heroTitle .hero-char');
+  setTimeout(() => {
+    allChars.forEach((ch, i) => { setTimeout(() => ch.classList.add('in'), i * 42); });
+  }, 1950);
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ NAV LOGO — ABHISHEK PATEL creative build
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  const logoEl = document.getElementById('navLogo');
+  if (!logoEl) return;
+  const fullText = 'ABHISHEK PATEL';
+  const wrap = document.createElement('span');
+  wrap.className = 'logo-name-wrap';
+  fullText.split('').forEach((ch, i) => {
+    if (ch === ' ') {
+      const sp = document.createElement('span');
+      sp.className = 'logo-char-space';
+      wrap.appendChild(sp);
+    } else {
+      const span = document.createElement('span');
+      span.className = 'logo-char';
+      span.textContent = ch;
+      // Stagger the color transition delay left-to-right
+      span.style.transitionDelay = (i * 0.03) + 's';
+      wrap.appendChild(span);
+    }
+  });
+  const dot = document.createElement('span');
+  dot.className = 'logo-dot';
+  dot.textContent = '.';
+  logoEl.appendChild(wrap);
+  logoEl.appendChild(dot);
+
+  // On mouseleave, reverse the wave right-to-left
+  const charEls = wrap.querySelectorAll('.logo-char');
+  const total = charEls.length;
+  logoEl.addEventListener('mouseleave', () => {
+    charEls.forEach((ch, i) => {
+      ch.style.transitionDelay = ((total - 1 - i) * 0.025) + 's';
+    });
+  });
+  logoEl.addEventListener('mouseenter', () => {
+    charEls.forEach((ch, i) => {
+      ch.style.transitionDelay = (i * 0.03) + 's';
+    });
+  });
+})();
+
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ CURSOR PARTICLE TRAIL
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  let lastParticle = 0;
+  document.addEventListener('mousemove', e => {
+    const now = Date.now();
+    if (now - lastParticle < 60) return;
+    lastParticle = now;
+    const p = document.createElement('div');
+    p.className = 'cursor-particle';
+    p.style.left = e.clientX + 'px';
+    p.style.top = e.clientY + 'px';
+    p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
+    p.style.opacity = Math.random() * 0.6 + 0.2;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 650);
+  });
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ MAGNETIC BUTTONS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  document.querySelectorAll('.btn-primary, .reel-arrow, .social-link').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) * 0.28;
+      const dy = (e.clientY - cy) * 0.28;
+      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ CONTACT SPOTLIGHT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  const contactSection = document.getElementById('contact');
+  const spotlight = document.getElementById('contactSpotlight');
+  if (!contactSection || !spotlight) return;
+  contactSection.addEventListener('mousemove', e => {
+    const r = contactSection.getBoundingClientRect();
+    spotlight.style.left = (e.clientX - r.left) + 'px';
+    spotlight.style.top = (e.clientY - r.top) + 'px';
+  });
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ STAT NUMBER COUNTER ANIMATION
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  const statsEl = document.getElementById('stats');
+  if (!statsEl) return;
+  let triggered = false;
+  const statsObs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && !triggered) {
+      triggered = true;
+      // Animate "30+" counter
+      const targets = document.querySelectorAll('.stat-num');
+      targets.forEach(el => {
+        const raw = el.textContent.trim();
+        const match = raw.match(/^(\d+)/);
+        if (!match) return;
+        const end = parseInt(match[1]);
+        const suffix = raw.replace(match[1], '');
+        let start = 0;
+        const dur = 1200;
+        const step = dur / end;
+        const timer = setInterval(() => {
+          start++;
+          el.textContent = start + suffix;
+          if (start >= end) { el.textContent = raw; clearInterval(timer); }
+        }, step);
+      });
+    }
+  }, { threshold: 0.5 });
+  statsObs.observe(statsEl);
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ SKILL TAGS STAGGER REVEAL
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  const skillsObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const tags = entry.target.querySelectorAll('.skill-tag');
+        tags.forEach((tag, i) => {
+          setTimeout(() => tag.classList.add('revealed'), i * 80);
+        });
+        skillsObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const skillsEl = document.querySelector('.skills-list');
+  if (skillsEl) skillsObs.observe(skillsEl);
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ ABOUT IMAGE 3D TILT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  const imgWrap = document.querySelector('.about-img-wrap');
+  if (!imgWrap) return;
+  const parent = imgWrap.closest('.about-visual');
+  if (!parent) return;
+  parent.addEventListener('mousemove', e => {
+    const r = parent.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const rx2 = ((e.clientY - cy) / r.height) * -8;
+    const ry2 = ((e.clientX - cx) / r.width) * 8;
+    imgWrap.style.transform = `perspective(700px) rotateX(${rx2}deg) rotateY(${ry2}deg) scale(1.02)`;
+  });
+  parent.addEventListener('mouseleave', () => {
+    imgWrap.style.transform = 'perspective(700px) rotateX(0) rotateY(0) scale(1)';
+  });
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ✦ CURSOR RING GROW ON HOVER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+document.querySelectorAll('a, button, .work-category, .video-card, .reel-slide').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.width = '48px';
+    ring.style.height = '48px';
+    ring.style.opacity = '0.95';
+    ring.style.borderColor = 'var(--accent)';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.width = '28px';
+    ring.style.height = '28px';
+    ring.style.opacity = '0.85';
+    ring.style.borderColor = 'var(--accent)';
+  });
+});
 </script>
 </body>
 </html>
